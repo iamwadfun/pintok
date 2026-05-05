@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ปิ่นโตข้างบ้าน</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sarabun',Arial,sans-serif;background:#f0f6fb;font-size:16px;-webkit-text-size-adjust:100%;}
+button{font-family:inherit;font-size:16px;border:none;background:none;cursor:pointer;}
+input,textarea,select{font-family:inherit;font-size:16px;border:none;outline:none;}
+img{display:block;}
+
+#APP{max-width:430px;margin:0 auto;background:#fff;}
+
+/* === TOPBAR === */
+#TOP{background:#2E86C1;padding:10px 14px;}
+#TOP table{width:100%;border-collapse:collapse;}
+#TOP td{vertical-align:middle;padding:0;}
+#TLOGO{width:36px;height:36px;border-radius:50%;overflow:hidden;background:#fff;text-align:center;line-height:36px;font-size:17px;border:2px solid rgba(255,255,255,.4);display:inline-block;}
+#TLOGO img{width:100%;height:100%;object-fit:cover;}
+#TTITLE{font-size:17px;font-weight:700;color:#fff;padding-left:10px;}
+.tbtn{background:rgba(255,255,255,.2);color:#fff;padding:6px 12px;border-radius:18px;font-size:13px;font-weight:600;}
+.tbtns{text-align:right;white-space:nowrap;}
+.tbtns button+button{margin-left:6px;}
+#BCART{display:none;}
+
+/* === MODAL === */
+#MWRAP{display:none;background:rgba(0,0,0,.5);padding:60px 20px 20px;}
+.mbox{background:#fff;border-radius:14px;padding:24px 20px;max-width:390px;margin:0 auto;text-align:center;}
+.mbox h3{font-size:18px;font-weight:700;color:#1A5276;margin-bottom:8px;}
+.mbox p{font-size:14px;color:#666;margin-bottom:14px;}
+#PINF{width:100%;border:1.5px solid #aac;border-radius:10px;padding:12px;font-size:22px;text-align:center;letter-spacing:8px;background:#f8fbff;}
+.mbbtns{display:table;width:100%;border-spacing:8px;margin-top:12px;}
+.mbbtns button{display:table-cell;width:50%;padding:12px;border-radius:10px;font-size:15px;font-weight:600;}
+#PINNO{background:#eee;color:#555;}
+#PINOK{background:#2E86C1;color:#fff;}
+
+/* === TOAST (no fixed!) === */
+#TOAST{background:rgba(0,0,0,.82);color:#fff;padding:11px 20px;border-radius:22px;font-size:14px;text-align:center;margin:10px 14px;display:none;}
+
+/* === PAGES === */
+.pg{display:none;}
+.pg.on{display:block;}
+
+/* === LOC PAGE === */
+.lpage{padding:28px 20px;text-align:center;}
+.licon{width:80px;height:80px;border-radius:50%;background:#D6EAF8;margin:0 auto 16px;line-height:80px;font-size:36px;}
+.lpage h2{font-size:20px;font-weight:700;color:#1A5276;margin-bottom:8px;}
+.lpage>p{font-size:14px;color:#666;line-height:1.65;margin-bottom:16px;}
+#LOCOK{background:#E8F8EF;border:1px solid #1D9E75;border-radius:12px;padding:12px 16px;font-size:13px;color:#085041;margin-bottom:12px;display:none;text-align:left;line-height:1.65;}
+.acard{background:#fff;border:1px solid #cde;border-radius:12px;padding:14px;margin-bottom:14px;text-align:left;}
+.acard h3{font-size:14px;font-weight:600;color:#1A5276;margin-bottom:6px;}
+.acard p{font-size:12px;color:#888;margin-bottom:8px;line-height:1.5;}
+#DADDR{width:100%;border:1px solid #cde;border-radius:9px;padding:10px 12px;resize:none;line-height:1.5;background:#fff;}
+.gbtn{display:block;width:100%;background:#2E86C1;color:#fff;padding:14px;border-radius:12px;font-size:15px;font-weight:600;margin-bottom:10px;text-align:center;}
+.skbtn{display:block;width:100%;background:#fff;border:1px solid #aac;color:#777;padding:12px;border-radius:12px;font-size:14px;text-align:center;}
+
+/* === HOME === */
+.hero{background:#2E86C1;padding:16px 14px 20px;}
+.hero table{width:100%;border-collapse:collapse;}
+.hero td{vertical-align:middle;padding:0;}
+.hlogo{width:52px;height:52px;border-radius:12px;background:#fff;overflow:hidden;text-align:center;line-height:52px;font-size:26px;display:block;}
+.hlogo img{width:100%;height:100%;object-fit:cover;}
+.htxt{padding-left:12px;}
+.htxt h2{font-size:19px;font-weight:700;color:#fff;}
+.htxt p{font-size:12px;color:rgba(255,255,255,.85);margin-top:3px;}
+#LOCBAR{background:#1A5276;padding:8px 14px;display:none;}
+#LOCBAR table{width:100%;border-collapse:collapse;}
+#LOCBAR td{vertical-align:middle;font-size:12px;color:rgba(255,255,255,.9);}
+#LOCBAR td:last-child{text-align:right;}
+#CHLOC{background:rgba(255,255,255,.2);color:#fff;font-size:11px;padding:3px 9px;border-radius:9px;}
+.srch{background:#fff;margin:12px;border-radius:11px;border:1px solid #cde;padding:9px 13px;}
+.srch table{width:100%;border-collapse:collapse;}
+.srch td{vertical-align:middle;}
+.srch td:first-child{width:20px;color:#aaa;font-size:16px;}
+#SINP{width:100%;background:transparent;}
+.stit{font-size:12px;font-weight:700;padding:12px 14px 6px;color:#888;letter-spacing:.5px;}
+
+/* SHOP GRID */
+.sgrid{padding:0 10px 20px;}
+.srow{margin-bottom:10px;}
+.srow table{width:100%;border-collapse:collapse;}
+.scell{width:50%;padding:0 4px;vertical-align:top;}
+.scard{background:#fff;border-radius:12px;border:1px solid #cde;overflow:hidden;width:100%;text-align:left;display:block;}
+.simg{height:84px;background:#D6EAF8;overflow:hidden;position:relative;text-align:center;line-height:84px;font-size:36px;}
+.simg img{width:100%;height:84px;object-fit:cover;position:absolute;top:0;left:0;}
+.scov{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);color:#fff;font-size:12px;font-weight:700;line-height:84px;text-align:center;}
+.sbdy{padding:8px 10px 10px;}
+.scode{font-size:9px;color:#2E86C1;font-weight:700;background:#D6EAF8;display:inline-block;padding:1px 6px;border-radius:4px;margin-bottom:3px;}
+.sname{font-size:13px;font-weight:700;color:#1a1a1a;}
+.saddr{font-size:11px;color:#888;margin-top:1px;}
+.sdist{font-size:11px;color:#2E86C1;font-weight:600;margin-top:2px;}
+.tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:5px;margin-top:3px;font-weight:600;}
+.to{background:#E1F5EE;color:#0F6E56;}
+.tc{background:#FEE;color:#A32D2D;}
+
+/* === MENU === */
+.mhero{height:120px;background:#D6EAF8;overflow:hidden;position:relative;text-align:center;line-height:120px;font-size:50px;}
+.mhero img{width:100%;height:120px;object-fit:cover;position:absolute;top:0;left:0;}
+.mhov{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.55));padding:10px 14px;color:#fff;}
+.mhov h2{font-size:15px;font-weight:700;}
+.mhov p{font-size:11px;opacity:.9;}
+.dstrip{background:#FAEEDA;padding:8px 14px;font-size:12px;color:#BA7517;}
+.dstrip table{width:100%;border-collapse:collapse;}
+.dstrip td:last-child{text-align:right;}
+
+.mitem{background:#fff;border-bottom:1px solid #e4eef5;padding:12px 14px;}
+.mitem table{width:100%;border-collapse:collapse;}
+.mitem td{vertical-align:top;padding:0;}
+.mitd-img{width:58px;}
+.mibox{width:56px;height:56px;border-radius:10px;background:#EBF5FB;overflow:hidden;text-align:center;line-height:56px;font-size:24px;}
+.mibox img{width:100%;height:100%;object-fit:cover;}
+.mitd-body{padding-left:10px;}
+.miname{font-size:14px;font-weight:600;}
+.midesc{font-size:12px;color:#888;margin-top:1px;}
+.miprice{font-size:14px;font-weight:700;color:#1A5276;margin-top:3px;}
+.chips{margin-top:6px;}
+.chip{display:inline-block;background:#EBF5FB;border:1px solid #a9cce3;color:#666;font-size:11px;padding:3px 9px;border-radius:18px;margin:2px 2px 0 0;}
+.chip.on{background:#EEEDFE;border-color:#534AB7;color:#534AB7;font-weight:600;}
+.mitd-btn{width:40px;vertical-align:bottom;text-align:right;}
+.abtn{background:#2E86C1;color:#fff;width:32px;height:32px;border-radius:50%;font-size:22px;line-height:30px;text-align:center;padding:0;display:inline-block;}
+
+/* cart btn below menu */
+.mbtn-wrap{padding:12px 14px;background:#f0f6fb;border-top:1px solid #cde;}
+.pbtn{display:block;width:100%;background:#2E86C1;color:#fff;padding:14px;border-radius:12px;font-size:15px;font-weight:700;text-align:center;}
+.pbtn:disabled,.pbtn[disabled]{background:#aaa;}
+
+/* === CART === */
+.cstrip{background:#D6EAF8;padding:9px 14px;display:none;}
+.cstrip table{width:100%;border-collapse:collapse;}
+.cstrip td{font-size:12px;color:#1A5276;vertical-align:middle;}
+.cstrip td:last-child{text-align:right;font-weight:700;}
+.citem{background:#fff;border-bottom:1px solid #e4eef5;padding:11px 14px;}
+.citem table{width:100%;border-collapse:collapse;}
+.citem td{vertical-align:middle;padding:0;}
+.cibox{width:42px;height:42px;border-radius:8px;background:#EBF5FB;overflow:hidden;text-align:center;line-height:42px;font-size:18px;}
+.cibox img{width:100%;height:100%;object-fit:cover;}
+.citd-body{padding-left:8px;}
+.ciname{font-size:13px;font-weight:600;}
+.ciads{font-size:11px;color:#534AB7;margin-top:1px;}
+.cifrom{font-size:11px;color:#888;}
+.citd-right{text-align:right;white-space:nowrap;width:90px;}
+.qb{background:#EBF5FB;border:1px solid #cde;width:28px;height:28px;border-radius:50%;font-size:16px;line-height:26px;text-align:center;display:inline-block;vertical-align:middle;}
+.qn{display:inline-block;width:22px;text-align:center;font-size:14px;font-weight:700;vertical-align:middle;}
+.citot{display:block;font-size:13px;font-weight:700;color:#1A5276;margin-top:4px;}
+
+/* === SUM CARD === */
+.sumcard{background:#fff;margin:10px 12px;border-radius:12px;padding:13px 15px;border:1px solid #cde;}
+.sumcard table{width:100%;border-collapse:collapse;}
+.sumcard td{font-size:13px;padding:2px 0;}
+.sumcard td:last-child{text-align:right;}
+.stot td{font-size:15px;font-weight:700;border-top:1px solid #cde;padding-top:8px;}
+.stot td:last-child{color:#1A5276;}
+
+/* === CONFIRM === */
+.csec{padding:12px 14px;}
+.lbl{font-size:12px;color:#777;margin-bottom:4px;font-weight:500;display:block;margin-top:4px;}
+.finp{width:100%;border:1px solid #cde;border-radius:10px;padding:10px 13px;background:#fff;display:block;margin-bottom:2px;}
+textarea.finp{resize:vertical;line-height:1.5;}
+.oprev{background:#fff;border-radius:12px;padding:14px;margin:10px 14px 0;border:1px solid #cde;}
+.onum{font-size:18px;font-weight:700;color:#1A5276;}
+.otime{font-size:11px;color:#888;margin:2px 0 10px;}
+.olist{white-space:pre-line;font-size:12px;color:#222;line-height:1.7;border-top:1px solid #cde;padding-top:10px;}
+
+/* === SUCCESS === */
+.sucwrap{padding:30px 20px 40px;text-align:center;}
+.sucwrap h2{font-size:20px;font-weight:700;color:#1A5276;margin:12px 0 8px;}
+.sucwrap>p{font-size:13px;color:#666;line-height:1.6;}
+.sucbox{background:#E8F8EF;border:1px solid #1D9E75;border-radius:12px;padding:16px;margin:16px 0;text-align:left;}
+.sucbox h4{font-size:13px;font-weight:700;color:#0F6E56;margin-bottom:10px;}
+.sucbox p{font-size:13px;color:#085041;white-space:pre-line;line-height:1.75;}
+.copyrow{text-align:center;margin-top:10px;}
+.copybtn{background:#1D9E75;color:#fff;padding:8px 20px;border-radius:10px;font-size:13px;font-weight:600;}
+.lbtn{display:block;width:100%;max-width:280px;margin:12px auto 6px;background:#06c755;color:#fff;padding:14px;border-radius:12px;font-size:15px;font-weight:700;text-align:center;}
+.obtn{display:block;width:100%;max-width:280px;margin:4px auto;background:#fff;border:1.5px solid #2E86C1;color:#2E86C1;padding:12px;border-radius:12px;font-size:14px;font-weight:600;text-align:center;}
+
+/* === ADMIN === */
+.adwrap{padding:14px 14px 40px;}
+.adwrap h2{font-size:16px;font-weight:700;color:#1A5276;margin-bottom:12px;}
+.asec{background:#fff;border-radius:12px;padding:13px 14px;border:1px solid #cde;margin-bottom:12px;}
+.asec h3{font-size:11px;font-weight:700;color:#888;margin-bottom:9px;text-transform:uppercase;letter-spacing:.5px;}
+.arow{margin-bottom:6px;}
+.arow table{width:100%;border-collapse:collapse;}
+.arow td{vertical-align:middle;padding:0;}
+.arow td+td{width:60px;padding-left:6px;}
+.ainp{width:100%;border:1px solid #cde;border-radius:8px;padding:8px 10px;background:#fff;display:block;}
+.sbtn{display:block;width:100%;background:#1D9E75;color:#fff;padding:8px;border-radius:8px;font-size:12px;font-weight:600;text-align:center;}
+.dbtn{color:#C0392B;font-size:14px;padding:2px 6px;background:none;}
+.anew{display:block;width:100%;background:none;border:1px dashed #a9cce3;color:#2E86C1;padding:8px;border-radius:8px;font-size:12px;margin-top:8px;text-align:center;}
+.uplbl{background:#EBF5FB;border:1px solid #a9cce3;border-radius:7px;padding:5px 10px;font-size:11px;color:#666;display:inline-block;cursor:pointer;}
+.imth{width:34px;height:34px;border-radius:6px;object-fit:cover;border:1px solid #cde;vertical-align:middle;}
+.medblk{border:1px solid #cde;border-radius:9px;padding:9px;margin:5px 0;background:#FAFCFD;}
+.gstat{font-size:11px;color:#1D9E75;margin-top:5px;}
+.adblk{background:#fff;border-radius:6px;padding:6px 8px;margin-top:4px;}
+.adrow table{width:100%;border-collapse:collapse;}
+.adrow td{vertical-align:middle;padding:2px 0;}
+.adrow td+td{width:52px;padding-left:4px;}
+.adrow td:last-child{width:30px;padding-left:4px;text-align:right;}
+</style>
+</head>
+<body>
+<div id="APP">
+
+<!-- TOPBAR -->
+<div id="TOP">
+  <table><tr>
+    <td style="width:40px;"><div id="TLOGO">🍱</div></td>
+    <td><span id="TTITLE" style="font-size:17px;font-weight:700;color:#fff;padding-left:10px;">ปิ่นโตข้างบ้าน</span></td>
+    <td class="tbtns">
+      <button class="tbt tbtns" id="BCART" style="display:none;background:rgba(255,255,255,.2);color:#fff;padding:6px 12px;border-radius:18px;font-size:13px;font-weight:600;">🛒 <span id="CARTN">0</span></button>
+      <button id="BADMIN" style="background:rgba(255,255,255,.2);color:#fff;padding:6px 12px;border-radius:18px;font-size:13px;font-weight:600;margin-left:6px;">⚙️</button>
+    </td>
+  </tr></table>
+</div>
+
+<!-- MODAL -->
+<div id="MWRAP" style="display:none;background:rgba(0,0,0,.5);padding:60px 20px 20px;">
+  <div class="mbox">
+    <h3>🔐 Admin</h3>
+    <p>ใส่รหัสผ่าน 4-6 หลัก</p>
+    <input id="PINF" type="password" inputmode="numeric" maxlength="6" autocomplete="off" placeholder="••••">
+    <div class="mbbtns">
+      <button id="PINNO">ยกเลิก</button>
+      <button id="PINOK">เข้าสู่ระบบ</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="TOAST"></div>
+
+<!-- PAGE: LOC -->
+<div class="pg on" id="PGLOC">
+  <div class="lpage">
+    <div class="licon">📍</div>
+    <h2>ระบุตำแหน่งของคุณ</h2>
+    <p>เพื่อแสดงระยะทางและค่าจัดส่ง<br>ของแต่ละร้านก่อนสั่ง</p>
+    <div id="LOCOK"></div>
+    <div class="acard">
+      <h3>📝 ที่อยู่จัดส่ง</h3>
+      <p>กรอกที่อยู่ให้ครบเพื่อให้ไรเดอร์หาบ้านได้ง่ายขึ้น</p>
+      <textarea id="DADDR" rows="3" placeholder="เช่น 99/5 หมู่ 2 บ้านหลังร้านสะดวกซื้อ หน้าบ้านรถสีแดง..."></textarea>
+    </div>
+    <button class="gbtn" id="BTNGPS">📡 ใช้ตำแหน่ง GPS อัตโนมัติ</button>
+    <button class="skbtn" id="BTNSKIP">ข้ามขั้นตอนนี้ →</button>
+  </div>
+</div>
+
+<!-- PAGE: HOME -->
+<div class="pg" id="PGHOME">
+  <div class="hero">
+    <table><tr>
+      <td style="width:56px;"><div class="hlogo" id="HLOGO">🍱</div></td>
+      <td class="htxt"><h2 id="HBNAME">ปิ่นโตข้างบ้าน</h2><p id="HBTAG">สั่งอาหารส่งถึงบ้าน</p></td>
+    </tr></table>
+  </div>
+  <div id="LOCBAR">
+    <table><tr>
+      <td>📍 <span id="LOCTXT"></span></td>
+      <td><button id="CHLOC">เปลี่ยน</button></td>
+    </tr></table>
+  </div>
+  <div class="srch">
+    <table><tr>
+      <td style="width:22px;color:#aaa;font-size:16px;">🔍</td>
+      <td><input id="SINP" placeholder="ค้นหาร้าน หรือเมนู..."></td>
+    </tr></table>
+  </div>
+  <div class="stit">ร้านค้าทั้งหมด</div>
+  <div class="sgrid" id="SGRID"></div>
+</div>
+
+<!-- PAGE: MENU -->
+<div class="pg" id="PGMENU">
+  <div id="MHERO"></div>
+  <div id="MDIST"></div>
+  <div id="MITEMS"></div>
+  <div class="mbtn-wrap">
+    <button class="pbtn" id="MCBTN" disabled>ดูตะกร้า (0 บาท)</button>
+  </div>
+</div>
+
+<!-- PAGE: CART -->
+<div class="pg" id="PGCART">
+  <div class="cstrip" id="CSTRIP">
+    <table><tr>
+      <td>📍 <span id="CSTXT"></span></td>
+      <td style="text-align:right;">เปลี่ยน ›</td>
+    </tr></table>
+  </div>
+  <div id="CITEMS"></div>
+  <div id="CSUM"></div>
+  <div class="mbtn-wrap">
+    <button class="pbtn" id="CCBTN">ยืนยันการสั่งซื้อ</button>
+  </div>
+</div>
+
+<!-- PAGE: CONFIRM -->
+<div class="pg" id="PGCONFIRM">
+  <div class="oprev" id="OPREV"></div>
+  <div class="csec">
+    <label class="lbl" for="FNAME">ชื่อผู้สั่ง</label>
+    <input class="finp" id="FNAME" placeholder="เช่น คุณมานี">
+    <label class="lbl" for="FPHONE">เบอร์โทร</label>
+    <input class="finp" id="FPHONE" placeholder="08x-xxx-xxxx" type="tel">
+    <label class="lbl" for="FADDR">📍 ที่อยู่จัดส่ง</label>
+    <textarea class="finp" id="FADDR" rows="3" placeholder="ระบุที่อยู่จัดส่ง"></textarea>
+    <label class="lbl" for="FNOTE">📝 หมายเหตุ (ถ้ามี)</label>
+    <input class="finp" id="FNOTE" placeholder="เช่น ไม่ใส่ผักชี">
+  </div>
+  <div id="OSUM"></div>
+  <div class="mbtn-wrap">
+    <button class="pbtn" id="SUBBTN">✅ ยืนยันออเดอร์</button>
+  </div>
+</div>
+
+<!-- PAGE: SUCCESS -->
+<div class="pg" id="PGSUCCESS">
+  <div class="sucwrap">
+    <div style="font-size:52px;">✅</div>
+    <h2>บันทึกออเดอร์เรียบร้อยแล้ว!</h2>
+    <p>ขอบคุณที่สั่งจาก <span id="SBNAME"></span><br>กรุณากลับไปที่ LINE เพื่อรอยืนยัน</p>
+    <div class="sucbox">
+      <h4>📋 ข้อความสรุปสำหรับแอดมิน — copy แล้วส่งให้ลูกค้าทาง LINE</h4>
+      <p id="SMSG"></p>
+      <div class="copyrow">
+        <button class="copybtn" id="COPYBTN">📋 Copy ข้อความ</button>
+      </div>
+    </div>
+    <p style="font-size:12px;color:#aaa;margin:4px 0 14px;">แอดมินจะส่งสรุปและ QR โอนเงินให้คุณใน LINE ไม่นาน 🙏</p>
+    <button class="lbtn" id="BTNLINE">💬 กลับสู่ LINE</button>
+    <button class="obtn" id="BTNRESET">🛒 สั่งใหม่</button>
+  </div>
+</div>
+
+<!-- PAGE: ADMIN -->
+<div class="pg" id="PGADMIN">
+  <div class="adwrap">
+    <h2>⚙️ ตั้งค่าระบบ</h2>
+
+    <div class="asec">
+      <h3>🔐 รหัสผ่าน Admin</h3>
+      <div class="arow"><table><tr>
+        <td><input class="ainp" id="APIN" type="password" placeholder="ตัวเลข 4-6 หลัก"></td>
+        <td><button class="sbtn" id="SVPIN">บันทึก</button></td>
+      </tr></table></div>
+      <div style="font-size:10px;color:#aaa;margin-top:4px;">ค่าเริ่มต้น: 1234</div>
+    </div>
+
+    <div class="asec">
+      <h3>โลโก้ & แบรนด์</h3>
+      <div style="margin-bottom:10px;">
+        <div id="ALOGOPREV" style="width:50px;height:50px;border-radius:10px;background:#D6EAF8;display:inline-block;vertical-align:middle;text-align:center;line-height:50px;font-size:22px;overflow:hidden;border:1px solid #cde;">🍱</div>
+        <label class="uplbl" style="margin-left:8px;vertical-align:middle;">📷 อัปโหลดโลโก้<input type="file" accept="image/*" id="LOGOFILE" style="display:none"></label>
+      </div>
+      <div class="arow"><table><tr>
+        <td><input class="ainp" id="ABNAME" placeholder="ชื่อแบรนด์"></td>
+        <td><button class="sbtn" id="SVBRAND">บันทึก</button></td>
+      </tr></table></div>
+      <input class="ainp" id="ABTAG" placeholder="คำโปรย" style="margin-top:6px;">
+    </div>
+
+    <div class="asec">
+      <h3>ข้อความแจ้งเตือน</h3>
+      <div class="lbl">เมื่อลูกค้ากดสั่งอาหาร</div>
+      <div class="arow"><table><tr>
+        <td><input class="ainp" id="ATMADD"></td>
+        <td><button class="sbtn" id="SVTMADD">บันทึก</button></td>
+      </tr></table></div>
+      <div class="lbl">เมื่อลูกค้ายืนยันออเดอร์</div>
+      <div class="arow"><table><tr>
+        <td><input class="ainp" id="ATMCON"></td>
+        <td><button class="sbtn" id="SVTMCON">บันทึก</button></td>
+      </tr></table></div>
+    </div>
+
+    <div class="asec">
+      <h3>ข้อความสรุปออเดอร์ (แก้ไขส่วนที่ไม่ใช่ออเดอร์)</h3>
+      <div style="font-size:11px;color:#888;margin-bottom:8px;line-height:1.6;">
+        ใช้ <b>{ORDER}</b> แทนรายการออเดอร์อัตโนมัติ<br>
+        ตัวอย่าง: ข้อความต้อนรับ + {ORDER} + วิธีโอนเงิน
+      </div>
+      <div class="lbl">ข้อความนำ (ก่อนรายการออเดอร์)</div>
+      <textarea class="ainp" id="AMSGHEAD" rows="3" style="resize:vertical;line-height:1.5;margin-bottom:6px;"></textarea>
+      <div class="lbl">ข้อความปิด (หลังรายการออเดอร์)</div>
+      <textarea class="ainp" id="AMSGFOOT" rows="3" style="resize:vertical;line-height:1.5;margin-bottom:6px;"></textarea>
+      <button class="sbtn" id="SVMSG" style="display:block;width:100%;margin-top:4px;">บันทึกข้อความ</button>
+    </div>
+
+    <div class="asec">
+      <h3>LINE OA</h3>
+      <div class="arow"><table><tr>
+        <td><input class="ainp" id="ALINEOA" placeholder="https://line.me/R/ti/p/@youroa" style="font-size:11px;"></td>
+        <td><button class="sbtn" id="SVLINEOA">บันทึก</button></td>
+      </tr></table></div>
+    </div>
+
+    <div class="asec">
+      <h3>Google Apps Script URL</h3>
+      <div class="arow"><table><tr>
+        <td><input class="ainp" id="AGAS" placeholder="https://script.google.com/macros/s/..." style="font-size:11px;" type="url"></td>
+        <td><button class="sbtn" id="SVGAS">บันทึก</button></td>
+      </tr></table></div>
+      <div class="gstat" id="AGSTAT"></div>
+    </div>
+
+    <div class="asec">
+      <h3>LINE Messaging API Token</h3>
+      <div class="arow"><table><tr>
+        <td><input class="ainp" id="ALINETOK" type="password"></td>
+        <td><button class="sbtn" id="SVLINETOK">บันทึก</button></td>
+      </tr></table></div>
+    </div>
+
+    <div class="asec">
+      <h3>ค่าจัดส่ง บาท/กม. (ขั้นต่ำ 20฿)</h3>
+      <input class="ainp" id="ARATE" type="number" min="1" max="99" style="width:80px;display:inline-block;">
+      <span style="font-size:12px;color:#888;margin-left:8px;">บาท / กิโลเมตร</span>
+    </div>
+
+    <div class="asec">
+      <h3>ร้านค้า & เมนู</h3>
+      <div id="ASHOPS"></div>
+      <button class="anew" id="ADDSHOP">+ เพิ่มร้านใหม่</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- #APP -->
+
+<script>
+var K='p11_';
+function LS(k){try{return localStorage.getItem(K+k)||'';}catch(e){return '';}}
+function SS(k,v){try{localStorage.setItem(K+k,typeof v==='string'?v:JSON.stringify(v));}catch(e){}}
+function $i(id){return document.getElementById(id);}
+
+var DEF=[
+  {id:1,code:'A001',name:'ข้าวแกงป้าแดง',emoji:'🍛',img:'',addr:'หมู่ 2 ใกล้วัดบ้านนา',mapsUrl:'',open:true,counter:0,
+   items:[
+    {id:11,name:'ข้าวหมูแดง',desc:'หมูแดงนุ่ม',price:55,emoji:'🍖',img:'',addons:[{l:'ไข่ดาว',p:10},{l:'ไข่เจียว',p:15},{l:'พิเศษ',p:10}]},
+    {id:12,name:'ข้าวผัดกระเพราไก่',desc:'ไก่สับ กระเพราหอม',price:50,emoji:'🍗',img:'',addons:[{l:'ไข่ดาว',p:10},{l:'พิเศษ',p:10}]},
+    {id:13,name:'ข้าวผัดปู',desc:'ปูอัดผัดข้าว',price:65,emoji:'🦀',img:'',addons:[{l:'พิเศษ',p:10}]},
+    {id:14,name:'ต้มยำกุ้ง',desc:'กุ้งสด',price:80,emoji:'🍲',img:'',addons:[]}
+  ]},
+  {id:2,code:'A002',name:'ก๋วยเตี๋ยวลุงสม',emoji:'🍜',img:'',addr:'หมู่ 1 ปากซอยตลาด',mapsUrl:'',open:true,counter:0,
+   items:[
+    {id:21,name:'ก๋วยเตี๋ยวหมูน้ำ',desc:'เส้นใหญ่',price:45,emoji:'🍜',img:'',addons:[{l:'ลูกชิ้นเพิ่ม',p:15},{l:'พิเศษ',p:10}]},
+    {id:22,name:'ก๋วยเตี๋ยวหมูแห้ง',desc:'หมูกรอบ',price:50,emoji:'🥩',img:'',addons:[{l:'พิเศษ',p:10}]},
+    {id:23,name:'ราดหน้าหมู',desc:'ซอสหอย',price:55,emoji:'🫕',img:'',addons:[{l:'ไข่ดาว',p:10}]}
+  ]},
+  {id:3,code:'A003',name:'ครัวคุณพ่อ',emoji:'🥘',img:'',addr:'หมู่ 3 หน้าโรงเรียน',mapsUrl:'',open:true,counter:0,
+   items:[
+    {id:31,name:'ข้าวกะเพราไข่ดาว',desc:'กะเพราหมูสับ',price:55,emoji:'🍳',img:'',addons:[{l:'ไข่ดาวเพิ่ม',p:10},{l:'พิเศษ',p:10}]},
+    {id:32,name:'ชาไทยเย็น',desc:'ชาแดง',price:30,emoji:'🧋',img:'',addons:[{l:'ไข่มุก',p:10},{l:'หวานน้อย',p:0}]},
+    {id:33,name:'โกโก้เย็น',desc:'โกโก้เข้มข้น',price:35,emoji:'🍫',img:'',addons:[{l:'วิปครีม',p:10}]}
+  ]},
+  {id:4,code:'A004',name:'ส้มตำน้องแนน',emoji:'🥗',img:'',addr:'หมู่ 4 ข้างสะดวกซื้อ',mapsUrl:'',open:false,counter:0,
+   items:[
+    {id:41,name:'ส้มตำไทย',desc:'สูตรไทย',price:40,emoji:'🥗',img:'',addons:[{l:'พิเศษ',p:10}]},
+    {id:42,name:'ไก่ย่าง',desc:'ถ่านหอม',price:65,emoji:'🍗',img:'',addons:[]},
+    {id:43,name:'ข้าวเหนียว',desc:'นึ่งสด',price:10,emoji:'🍚',img:'',addons:[]}
+  ]}
+];
+
+var shops=JSON.parse(LS('shops')||'null')||DEF;
+var gasUrl=LS('gas'),lineToken=LS('line'),rate=parseFloat(LS('rate')||'10');
+var bname=LS('bname')||'ปิ่นโตข้างบ้าน',btag=LS('btag')||'สั่งอาหารส่งถึงบ้าน',blogo=LS('blogo');
+var tmAdd=LS('tmAdd')||'🛒 เพิ่มลงตะกร้าแล้ว!';
+var tmCon=LS('tmCon')||'✅ ยืนยันออเดอร์แล้ว รอแอดมินส่งสรุปใน LINE นะคะ';
+var msgHead=LS('msgHead')||'🍱 {BNAME}\n🔢 ออเดอร์: {ORDERNUM}\n🕐 เวลาสั่ง: {TIME}\n━━━━━━━━━━━━━━\n👤 {NAME}  📞 {PHONE}\n📍 ที่อยู่: {ADDR}\n';
+var msgFoot=LS('msgFoot')||'\n━━━━━━━━━━━━━━\n🛍 ยอดอาหาร: {FOOD}฿\n🚚 ค่าจัดส่ง: {FEE}\n💰 รวมที่ต้องโอน: {TOTAL}\n{NOTE}\n\n👇 กรุณาโอนตาม QR และส่งสลิปกลับมาในแชทได้เลยค่ะ 🙏';
+var lineOA=LS('lineOA'),adminPin=LS('adminPin')||'1234';
+
+var cart=[],curShop=null,hist=[],curPg='LOC';
+var userLoc=null,delivAddr='',orderNum='';
+var selAds={};
+
+function saveShops(){SS('shops',shops);}
+
+// TOAST
+var _tt=null;
+function toast(msg){
+  var t=$i('TOAST');t.textContent=msg;t.style.display='block';
+  if(_tt)clearTimeout(_tt);
+  _tt=setTimeout(function(){t.style.display='none';},2200);
+}
+
+// PAGES — using display:none/block only, no CSS tricks
+var PGS=['LOC','HOME','MENU','CART','CONFIRM','SUCCESS','ADMIN'];
+function showPg(name,addH){
+  if(addH!==false&&curPg!==name)hist.push(curPg);
+  curPg=name;
+  for(var i=0;i<PGS.length;i++){
+    var el=$i('PG'+PGS[i]);
+    if(el)el.className='pg'+(PGS[i]===name?' on':'');
+  }
+  // Also hide toast when navigating
+  $i('TOAST').style.display='none';
+  window.scrollTo(0,0);
+  updCart();
+  if(name==='CART')renderCart();
+  if(name==='CONFIRM')renderConfirm();
+  if(name==='ADMIN')renderAdmin();
+  if(name==='HOME'){renderShops(shops);showLocBar();}
+}
+function goBack(){if(hist.length)showPg(hist.pop(),false);else showPg('HOME',false);}
+
+// CART MATH
+function cCount(){var n=0;for(var i=0;i<cart.length;i++)n+=cart[i].qty;return n;}
+function cSub(){var s=0;for(var i=0;i<cart.length;i++)s+=(cart[i].price+cart[i].adX)*cart[i].qty;return s;}
+
+// Distance from Google Maps URL
+function parseLatLng(url){
+  if(!url)return null;
+  // Handles: @lat,lng or q=lat,lng or place/... or maps?q=lat,lng
+  var m=url.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/)||url.match(/q=(-?\d+\.?\d*),(-?\d+\.?\d*)/)||url.match(/place\/[^/]+\/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+  if(m)return{lat:parseFloat(m[1]),lng:parseFloat(m[2])};
+  return null;
+}
+function gd(la1,lo1,la2,lo2){var R=6371,r=Math.PI/180,a=Math.sin((la2-la1)*r/2);a=a*a+Math.cos(la1*r)*Math.cos(la2*r)*Math.pow(Math.sin((lo2-lo1)*r/2),2);return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
+function shopDist(s){if(!userLoc||!s.mapsUrl)return null;var ll=parseLatLng(s.mapsUrl);if(!ll)return null;return gd(userLoc.lat,userLoc.lng,ll.lat,ll.lng);}
+function shopFee(s){var d=shopDist(s);return d===null?null:Math.max(20,Math.round(d*rate));}
+function cartFee(){if(!userLoc||!cart.length)return 0;var seen={},tot=0;for(var i=0;i<cart.length;i++){var sid=cart[i].sid;if(seen[sid])continue;seen[sid]=1;for(var j=0;j<shops.length;j++)if(shops[j].id===sid){var f=shopFee(shops[j]);if(f)tot+=f;break;}}return tot;}
+function cTot(){return cSub()+cartFee();}
+
+function updCart(){
+  var n=cCount();
+  $i('CARTN').textContent=n;
+  $i('BCART').style.display=n>0&&curPg!=='SUCCESS'?'inline-block':'none';
+}
+
+// BRAND
+function applyBrand(){
+  $i('TTITLE').textContent=bname;
+  $i('HBNAME').textContent=bname;
+  $i('HBTAG').textContent=btag;
+  $i('SBNAME').textContent=bname;
+  if(blogo){
+    $i('TLOGO').innerHTML='<img src="'+blogo+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+    $i('HLOGO').innerHTML='<img src="'+blogo+'" style="width:100%;height:100%;object-fit:cover;">';
+    var ap=$i('ALOGOPREV');if(ap)ap.innerHTML='<img src="'+blogo+'" style="width:100%;height:100%;object-fit:cover;border-radius:9px;">';
+  }
+}
+
+// GPS
+function doGPS(){
+  if(!navigator.geolocation){alert('เบราว์เซอร์ไม่รองรับ GPS');return;}
+  var btn=$i('BTNGPS');btn.textContent='📡 กำลังหาตำแหน่ง...';
+  navigator.geolocation.getCurrentPosition(function(p){
+    userLoc={lat:p.coords.latitude,lng:p.coords.longitude};
+    var ok=$i('LOCOK');ok.style.display='block';
+    ok.innerHTML='<strong>📍 พบตำแหน่งแล้ว!</strong><br>'+userLoc.lat.toFixed(4)+', '+userLoc.lng.toFixed(4)+'<br>ระบบจะคำนวณค่าส่งจากร้านแต่ละร้าน';
+    btn.textContent='✅ ใช้ตำแหน่งนี้ — เข้าดูร้าน →';
+    btn.setAttribute('data-gohome','1');
+  },function(e){btn.textContent='📡 ใช้ตำแหน่ง GPS อัตโนมัติ';alert('GPS: '+e.message);});
+}
+
+function showLocBar(){
+  var bar=$i('LOCBAR');
+  if(userLoc){bar.style.display='block';$i('LOCTXT').textContent='ตำแหน่งของคุณ — ดูค่าส่งแต่ละร้านด้านล่าง';}
+  else bar.style.display='none';
+}
+
+// SHOPS
+function shopHTML(s){
+  var d=shopDist(s),f=d!==null?shopFee(s):null;
+  var dh=d!==null?'<div class="sdist">🚚 '+d.toFixed(1)+' กม. | ค่าส่ง '+f+'฿</div>':'';
+  var ih;
+  if(s.img)ih='<div class="simg" style="line-height:0;"><img src="'+s.img+'">'+(!s.open?'<div class="scov">ปิด</div>':'')+'</div>';
+  else ih='<div class="simg">'+s.emoji+(!s.open?'<div class="scov">ปิด</div>':'')+'</div>';
+  return '<button class="scard" data-act="openshop" data-sid="'+s.id+'" data-open="'+(s.open?1:0)+'">'+ih+'<div class="sbdy"><span class="scode">'+s.code+'</span><div class="sname">'+s.name+'</div><div class="saddr">'+(s.addr||'')+'</div>'+dh+'<span class="tag '+(s.open?'to':'tc')+'">'+(s.open?'เปิด':'ปิด')+'</span></div></button>';
+}
+
+function renderShops(list){
+  var g=$i('SGRID'),h='';
+  for(var i=0;i<list.length;i+=2){
+    h+='<div class="srow"><table><tr><td class="scell">'+shopHTML(list[i])+'</td><td class="scell">'+(list[i+1]?shopHTML(list[i+1]):'')+'</td></tr></table></div>';
+  }
+  g.innerHTML=h;
+}
+
+function filterShops(){
+  var q=$i('SINP').value.toLowerCase(),r=[];
+  for(var i=0;i<shops.length;i++){var s=shops[i];if(s.name.toLowerCase().indexOf(q)!==-1){r.push(s);continue;}for(var j=0;j<s.items.length;j++)if(s.items[j].name.toLowerCase().indexOf(q)!==-1){r.push(s);break;}}
+  renderShops(r);
+}
+
+function openShop(id){
+  curShop=null;for(var i=0;i<shops.length;i++)if(shops[i].id===id){curShop=shops[i];break;}
+  if(!curShop)return;
+  var d=shopDist(curShop),f=d!==null?shopFee(curShop):null;
+  var mapsLink=curShop.mapsUrl?'<a href="'+curShop.mapsUrl+'" target="_blank" style="font-size:11px;color:#D6EAF8;">📍 ดูแผนที่</a>':'';
+  var hh='<div class="mhero">'+(curShop.img?'<img src="'+curShop.img+'">':(curShop.emoji||'🏪'))+'<div class="mhov"><h2>'+curShop.name+'</h2><p>['+curShop.code+'] '+(curShop.addr||'')+' '+mapsLink+'</p></div></div>';
+  $i('MHERO').innerHTML=hh;
+  $i('MDIST').innerHTML=d!==null?'<div class="dstrip"><table><tr><td>🚚 ระยะ '+d.toFixed(1)+' กม.</td><td>ค่าจัดส่ง '+f+'฿</td></tr></table></div>':'';
+  var mh='';
+  for(var k=0;k<curShop.items.length;k++){
+    var it=curShop.items[k],ads=it.addons||[],adh='';
+    if(ads.length){adh='<div class="chips">';for(var a=0;a<ads.length;a++)adh+='<span class="chip" data-act="togad" data-iid="'+it.id+'" data-ai="'+a+'">+'+ads[a].l+(ads[a].p?' '+ads[a].p+'฿':'')+'</span>';adh+='</div>';}
+    var ih2=it.img?'<div class="mibox" style="line-height:0;"><img src="'+it.img+'" style="width:56px;height:56px;object-fit:cover;display:block;border-radius:10px;"></div>':'<div class="mibox">'+it.emoji+'</div>';
+    mh+='<div class="mitem"><table><tr><td class="mitd-img">'+ih2+'</td><td class="mitd-body"><div class="miname">'+it.name+'</div><div class="midesc">'+it.desc+'</div><div class="miprice">'+it.price+'฿</div>'+adh+'</td><td class="mitd-btn"><button class="abtn" data-act="addcart" data-iid="'+it.id+'">+</button></td></tr></table></div>';
+  }
+  $i('MITEMS').innerHTML=mh;
+  showPg('MENU');
+}
+
+function toggleAd(iid,ai){
+  if(!selAds[iid])selAds[iid]={};
+  selAds[iid][ai]=!selAds[iid][ai];
+  var cs=document.querySelectorAll('[data-iid="'+iid+'"][data-act="togad"]');
+  for(var i=0;i<cs.length;i++)cs[i].className='chip'+(selAds[iid][i]?' on':'');
+}
+
+function addCart(iid){
+  var it=null;for(var i=0;i<curShop.items.length;i++)if(curShop.items[i].id===iid){it=curShop.items[i];break;}if(!it)return;
+  var ads=it.addons||[],sel=[];if(selAds[iid])for(var k in selAds[iid])if(selAds[iid][k])sel.push(parseInt(k,10));
+  sel.sort(function(a,b){return a-b;});
+  var extra=0,lbl=[];for(var s=0;s<sel.length;s++){extra+=ads[sel[s]].p;lbl.push('+'+ads[sel[s]].l);}
+  var key=iid+'_'+sel.join(','),ex=null;for(var c=0;c<cart.length;c++)if(cart[c].key===key){ex=cart[c];break;}
+  if(ex)ex.qty++;
+  else cart.push({key:key,id:it.id,name:it.name,emoji:it.emoji,img:it.img,price:it.price,sid:curShop.id,sname:curShop.name,scode:curShop.code,adLbl:lbl.join(' '),adX:extra,qty:1});
+  updCart();
+  var btn=$i('MCBTN');btn.disabled=false;btn.textContent='ดูตะกร้า ('+cSub()+' บาท)';
+  toast(tmAdd);
+}
+
+// CART PAGE
+function renderCart(){
+  var ci=$i('CITEMS'),cs=$i('CSTRIP');
+  if(userLoc){cs.style.display='block';$i('CSTXT').textContent='ตำแหน่งของคุณ — ค่าส่งคิดตามระยะร้าน';}else cs.style.display='none';
+  if(!cart.length){ci.innerHTML='<div style="text-align:center;padding:48px 20px;color:#aaa;font-size:14px;line-height:2.2;">ตะกร้าว่างอยู่ 🛒<br><button id="CBACK" class="pbtn" style="max-width:180px;margin:0 auto;display:block;padding:11px;font-size:13px;">เลือกร้าน</button></div>';$i('CSUM').innerHTML='';var cb=$i('CBACK');if(cb)cb.onclick=function(){showPg('HOME');};return;}
+  var h='';
+  for(var i=0;i<cart.length;i++){var c=cart[i];var ih=c.img?'<img src="'+c.img+'" style="width:42px;height:42px;object-fit:cover;border-radius:8px;">':c.emoji;h+='<div class="citem"><table><tr><td style="width:46px;vertical-align:top;"><div class="cibox">'+ih+'</div></td><td class="citd-body"><div class="ciname">'+c.name+'</div>'+(c.adLbl?'<div class="ciads">'+c.adLbl+'</div>':'')+'<div class="cifrom">['+c.scode+'] '+c.sname+'</div></td><td class="citd-right"><button class="qb" data-act="chqty" data-qi="'+i+'" data-qd="-1">−</button><span class="qn">'+c.qty+'</span><button class="qb" data-act="chqty" data-qi="'+i+'" data-qd="1">+</button><span class="citot">'+((c.price+c.adX)*c.qty)+'฿</span></td></tr></table></div>';}
+  ci.innerHTML=h;
+  renderSum('CSUM');
+}
+function chQty(i,d){cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);updCart();renderCart();}
+
+function renderSum(id){
+  var el=$i(id),fb='';
+  if(userLoc){var seen={};for(var i=0;i<cart.length;i++){var sid=cart[i].sid;if(seen[sid])continue;seen[sid]=1;for(var j=0;j<shops.length;j++)if(shops[j].id===sid){var d2=shopDist(shops[j]),f2=d2!==null?shopFee(shops[j]):null;if(f2)fb+='<tr><td style="font-size:11px;color:#aaa;padding-left:12px;">• '+shops[j].name+' ('+d2.toFixed(1)+' กม.)</td><td style="font-size:11px;color:#aaa;text-align:right;">'+f2+'฿</td></tr>';break;}}}
+  var fee=userLoc?cartFee()+'฿':'ยังไม่ระบุ GPS';var tot=userLoc?cTot()+'฿':cSub()+'+฿';
+  el.innerHTML='<div class="sumcard"><table><tr><td>ยอดอาหาร</td><td style="text-align:right;">'+cSub()+'฿</td></tr><tr><td>ค่าจัดส่งรวม</td><td style="text-align:right;">'+fee+'</td></tr>'+fb+'<tr class="stot"><td>รวมทั้งหมด</td><td style="text-align:right;color:#1A5276;">'+tot+'</td></tr></table></div>';
+}
+
+// CONFIRM
+function nextON(code){
+  var sh=null;for(var i=0;i<shops.length;i++)if(shops[i].code===code){sh=shops[i];break;}
+  if(!sh)return code+'-001';sh.counter=(sh.counter||0)+1;saveShops();
+  var n=String(sh.counter);while(n.length<3)n='0'+n;return code+'-'+n;
+}
+
+function renderConfirm(){
+  if(!cart.length){orderNum='???';}else{var fc=cart[0].scode,sh=null;for(var i=0;i<shops.length;i++)if(shops[i].code===fc){sh=shops[i];break;}var nn=((sh?sh.counter:0)||0)+1,p=String(nn);while(p.length<3)p='0'+p;orderNum=fc+'-'+p;}
+  var now=new Date();
+  var ds=now.toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+  var ts=now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+  var its='';for(var k=0;k<cart.length;k++){var c=cart[k];its+='• ['+c.scode+'] '+c.name+(c.adLbl?' '+c.adLbl:'')+' x'+c.qty+' = '+((c.price+c.adX)*c.qty)+'฿\n';}
+  $i('OPREV').innerHTML='<div class="onum">'+orderNum+'</div><div class="otime">🕐 '+ds+' '+ts+'</div><div class="olist">'+its+'</div>';
+  var fa=$i('FADDR');if(delivAddr&&!fa.value)fa.value=delivAddr;
+  renderSum('OSUM');
+}
+
+function buildMsg(name,phone,addr,ts,fee){
+  var items='';for(var i=0;i<cart.length;i++){var c=cart[i];items+='  • ['+c.scode+'] '+c.name+(c.adLbl?' '+c.adLbl:'')+' x'+c.qty+' = '+((c.price+c.adX)*c.qty)+'฿\n';}
+  var note=$i('FNOTE').value?'📝 หมายเหตุ: '+$i('FNOTE').value:'';
+  var feeStr=userLoc?fee+'฿':'ยังไม่ระบุ';
+  var totStr=userLoc?cTot()+'฿':cSub()+'+ ฿';
+  var head=msgHead.replace('{BNAME}',bname).replace('{ORDERNUM}',orderNum).replace('{TIME}',ts).replace('{NAME}',name).replace('{PHONE}',phone).replace('{ADDR}',addr||'ไม่ระบุ');
+  var foot=msgFoot.replace('{FOOD}',cSub()).replace('{FEE}',feeStr).replace('{TOTAL}',totStr).replace('{NOTE}',note);
+  return head+items+foot;
+}
+
+function submitOrder(){
+  var name=$i('FNAME').value.trim(),phone=$i('FPHONE').value.trim(),addr=$i('FADDR').value.trim();
+  if(!name||!phone){alert('กรุณากรอกชื่อและเบอร์โทร');return;}
+  var btn=$i('SUBBTN');btn.disabled=true;btn.textContent='กำลังส่งข้อมูล...';
+  orderNum=nextON(cart[0].scode);
+  var now=new Date(),ts=now.toLocaleString('th-TH'),fee=cartFee();
+  var adminMsg=buildMsg(name,phone,addr,ts,fee);
+  var arr=[];for(var i=0;i<cart.length;i++){var c=cart[i];arr.push('['+c.scode+'] '+c.sname+': '+c.name+(c.adLbl?' ('+c.adLbl+')':'')+' x'+c.qty+' = '+((c.price+c.adX)*c.qty)+'฿');}
+  var od={orderNum:orderNum,timestamp:ts,name:name,phone:phone,address:addr||'ไม่ระบุ',note:$i('FNOTE').value,items:arr.join(' | '),subtotal:cSub(),deliveryFee:userLoc?fee:'ยังไม่ระบุ',total:userLoc?cTot():'ยังไม่ระบุ',lat:userLoc?userLoc.lat:'',lng:userLoc?userLoc.lng:'',adminMsg:adminMsg};
+  function done(){$i('SMSG').textContent=adminMsg;toast(tmCon);setTimeout(function(){showPg('SUCCESS');},350);btn.disabled=false;btn.textContent='✅ ยืนยันออเดอร์';}
+  if(gasUrl&&typeof fetch==='function'){try{fetch(gasUrl,{method:'POST',body:JSON.stringify(od),headers:{'Content-Type':'application/json'},mode:'no-cors'}).then(done).catch(done);}catch(e){done();}}else done();
+}
+
+function copyMsg(){
+  var txt=$i('SMSG').textContent;
+  if(navigator.clipboard){navigator.clipboard.writeText(txt).then(function(){toast('📋 Copy แล้ว!');}).catch(function(){fallbackCopy(txt);});}
+  else fallbackCopy(txt);
+}
+function fallbackCopy(txt){var ta=document.createElement('textarea');ta.value=txt;ta.style.position='absolute';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('📋 Copy แล้ว!');}catch(e){toast('กด copy ด้วยตนเองได้เลย');}document.body.removeChild(ta);}
+
+function resetApp(){cart=[];curShop=null;hist=[];selAds={};['FNAME','FPHONE','FADDR','FNOTE'].forEach(function(x){var e=$i(x);if(e)e.value='';});updCart();showPg('HOME',false);}
+
+// ADMIN
+function renderAdmin(){
+  $i('APIN').value=adminPin;$i('ABNAME').value=bname;$i('ABTAG').value=btag;
+  $i('ATMADD').value=tmAdd;$i('ATMCON').value=tmCon;
+  $i('AMSGHEAD').value=msgHead;$i('AMSGFOOT').value=msgFoot;
+  $i('AGAS').value=gasUrl;$i('ALINETOK').value=lineToken;$i('ALINEOA').value=lineOA;$i('ARATE').value=rate;
+  if(gasUrl)$i('AGSTAT').textContent='✅ ตั้งค่าแล้ว';
+  if(blogo)$i('ALOGOPREV').innerHTML='<img src="'+blogo+'" style="width:100%;height:100%;object-fit:cover;border-radius:9px;">';
+  var h='';
+  for(var si=0;si<shops.length;si++){
+    var s=shops[si];
+    var sp=s.img?'<img src="'+s.img+'" class="imth">':'<span style="font-size:20px;">'+s.emoji+'</span>';
+    var cs=String(s.counter||0);while(cs.length<3)cs='0'+cs;
+    var ith='';
+    for(var ii=0;ii<s.items.length;ii++){
+      var it=s.items[ii];var ip=it.img?'<img src="'+it.img+'" class="imth">':'<span style="font-size:16px;">'+it.emoji+'</span>';
+      var adh='';
+      if(it.addons)for(var ai=0;ai<it.addons.length;ai++){var a=it.addons[ai];adh+='<div class="adrow"><table><tr><td><input class="ainp" value="'+a.l+'" style="font-size:11px;" data-x="al" data-si="'+si+'" data-ii="'+ii+'" data-ai="'+ai+'"></td><td><input class="ainp" value="'+a.p+'" type="number" style="font-size:11px;" data-x="ap" data-si="'+si+'" data-ii="'+ii+'" data-ai="'+ai+'" min="0"></td><td><button class="dbtn" data-x="dal" data-si="'+si+'" data-ii="'+ii+'" data-ai="'+ai+'">✕</button></td></tr></table></div>';}
+      ith+='<div class="medblk">'+ip+' <label class="uplbl" style="font-size:9px;padding:3px 7px;">📷<input type="file" accept="image/*" style="display:none" data-x="upit" data-si="'+si+'" data-ii="'+ii+'"></label> <input class="ainp" value="'+it.name+'" style="font-size:12px;display:inline-block;width:auto;" data-x="iname" data-si="'+si+'" data-ii="'+ii+'"> <input class="ainp" value="'+it.price+'" type="number" style="width:50px;font-size:12px;display:inline-block;" data-x="iprice" data-si="'+si+'" data-ii="'+ii+'">฿ <button class="dbtn" data-x="dit" data-si="'+si+'" data-ii="'+ii+'">🗑</button><div class="adblk"><div style="font-size:10px;color:#aaa;margin-bottom:4px;">Add-ons <button class="anew" style="display:inline-block;width:auto;padding:2px 8px;font-size:9px;margin:0;" data-x="addal" data-si="'+si+'" data-ii="'+ii+'">+ เพิ่ม</button></div>'+adh+'</div></div>';
+    }
+    h+='<div style="border:1px solid #cde;border-radius:10px;padding:10px;margin-bottom:10px;background:#fff;">'+
+      sp+' <label class="uplbl" style="font-size:10px;">📷<input type="file" accept="image/*" style="display:none" data-x="upsh" data-si="'+si+'"></label>'+
+      ' <input class="ainp" value="'+s.code+'" style="width:56px;font-size:11px;font-weight:700;display:inline-block;" data-x="scode" data-si="'+si+'">'+
+      ' <input class="ainp" value="'+s.name+'" style="display:inline-block;width:auto;" data-x="sname" data-si="'+si+'">'+
+      ' <label style="font-size:11px;"><input type="checkbox" '+(s.open?'checked':'')+' data-x="sopen" data-si="'+si+'"> เปิด</label>'+
+      ' <button class="dbtn" data-x="dsh" data-si="'+si+'">🗑</button><br><br>'+
+      '<input class="ainp" value="'+(s.addr||'')+'" style="width:100%;margin-bottom:6px;" data-x="saddr" data-si="'+si+'" placeholder="ที่อยู่/หมู่บ้าน"><br>'+
+      '<div style="font-size:11px;color:#888;margin-bottom:4px;">📍 ลิงก์ Google Maps ของร้าน (ใช้คำนวณค่าส่ง)</div>'+
+      '<input class="ainp" value="'+(s.mapsUrl||'')+'" style="width:100%;font-size:11px;margin-bottom:6px;" data-x="smaps" data-si="'+si+'" placeholder="https://maps.google.com/..."><br>'+
+      '<div style="font-size:10px;color:#aaa;margin-bottom:6px;">เลข: '+(s.counter||0)+' ('+s.code+'-'+cs+') <button class="dbtn" style="font-size:10px;" data-x="rset" data-si="'+si+'">↺</button></div>'+
+      '<div style="border-top:1px solid #e4eef5;padding-top:7px;"><div style="font-size:10px;font-weight:700;color:#aaa;margin-bottom:5px;">รายการเมนู</div>'+ith+
+      '<button class="anew" style="font-size:10px;" data-x="addit" data-si="'+si+'">+ เพิ่มเมนู</button></div></div>';
+  }
+  $i('ASHOPS').innerHTML=h;
+}
+
+function genCode(){var used={};for(var i=0;i<shops.length;i++)used[shops[i].code]=1;var n=1;while(true){var s=String(n);while(s.length<3)s='0'+s;if(!used['A'+s])return 'A'+s;n++;if(n>9999)return 'Z999';}}
+function readFile(f,cb){var r=new FileReader();r.onload=function(e){cb(e.target.result);};r.readAsDataURL(f);}
+
+// PIN
+function openPin(){$i('MWRAP').style.display='block';setTimeout(function(){$i('PINF').focus();},80);}
+function closePin(){$i('MWRAP').style.display='none';$i('PINF').value='';}
+function checkPin(){if($i('PINF').value===adminPin){closePin();showPg('ADMIN');}else{$i('PINF').value='';toast('❌ รหัสไม่ถูกต้อง');}}
+
+// ============================================================
+// SINGLE EVENT LISTENER ON document — captures all events
+// useCapture:true is key for iOS
+// ============================================================
+document.addEventListener('click',function(ev){
+  var el=ev.target;
+  for(var depth=0;depth<12&&el&&el.tagName&&el.tagName!=='HTML';depth++){
+    var id=el.id||'',act=el.getAttribute?el.getAttribute('data-act')||'':'',x=el.getAttribute?el.getAttribute('data-x')||'':'';
+    // Modal
+    if(id==='MWRAP'){closePin();return;}
+    if(id==='PINNO'){closePin();return;}
+    if(id==='PINOK'){checkPin();return;}
+    // Topbar
+    if(id==='BADMIN'){openPin();return;}
+    if(id==='BCART'){showPg('CART');return;}
+    // Back button (dynamic)
+    if(id==='TOPBACK'||el.getAttribute('data-act')==='goback'){goBack();return;}
+    // Loc page
+    if(id==='BTNGPS'){doGPS();return;}
+    if(el.getAttribute&&el.getAttribute('data-gohome')==='1'){delivAddr=$i('DADDR').value;showPg('HOME');return;}
+    if(id==='BTNSKIP'){delivAddr=$i('DADDR').value;showPg('HOME');return;}
+    // Home
+    if(id==='CHLOC'){showPg('LOC');return;}
+    // Menu
+    if(id==='MCBTN'){showPg('CART');return;}
+    // Cart
+    if(id==='CCBTN'){showPg('CONFIRM');return;}
+    if(id==='CSTRIP'){showPg('LOC');return;}
+    // Confirm
+    if(id==='SUBBTN'){submitOrder();return;}
+    // Success
+    if(id==='BTNLINE'){if(lineOA)window.location.href=lineOA;else alert('กรุณาตั้งค่าลิงก์ LINE OA ใน ⚙️');return;}
+    if(id==='BTNRESET'){resetApp();return;}
+    if(id==='COPYBTN'){copyMsg();return;}
+    // Admin saves
+    if(id==='SVPIN'){var v=$i('APIN').value.trim();if(!/^\d{4,6}$/.test(v)){alert('ตัวเลข 4-6 หลัก');return;}adminPin=v;SS('adminPin',adminPin);toast('🔐 บันทึกรหัสแล้ว');return;}
+    if(id==='SVBRAND'){bname=$i('ABNAME').value;btag=$i('ABTAG').value;SS('bname',bname);SS('btag',btag);applyBrand();toast('✅ บันทึกแล้ว');return;}
+    if(id==='SVTMADD'){tmAdd=$i('ATMADD').value;SS('tmAdd',tmAdd);toast('✅ บันทึกแล้ว');return;}
+    if(id==='SVTMCON'){tmCon=$i('ATMCON').value;SS('tmCon',tmCon);toast('✅ บันทึกแล้ว');return;}
+    if(id==='SVMSG'){msgHead=$i('AMSGHEAD').value;msgFoot=$i('AMSGFOOT').value;SS('msgHead',msgHead);SS('msgFoot',msgFoot);toast('✅ บันทึกข้อความแล้ว');return;}
+    if(id==='SVLINEOA'){lineOA=$i('ALINEOA').value;SS('lineOA',lineOA);toast('✅ บันทึกแล้ว');return;}
+    if(id==='SVGAS'){gasUrl=$i('AGAS').value;SS('gas',gasUrl);$i('AGSTAT').textContent='✅ บันทึกแล้ว';toast('✅ บันทึกแล้ว');return;}
+    if(id==='SVLINETOK'){lineToken=$i('ALINETOK').value;SS('line',lineToken);toast('✅ บันทึกแล้ว');return;}
+    if(id==='ADDSHOP'){shops.push({id:Date.now(),code:genCode(),name:'ร้านใหม่',emoji:'🍽️',img:'',addr:'หมู่ ',mapsUrl:'',open:true,counter:0,items:[]});saveShops();renderAdmin();return;}
+    // data-act
+    if(act==='openshop'){var sid=parseInt(el.getAttribute('data-sid'),10),op=el.getAttribute('data-open')==='1';if(!op)alert('ร้านนี้ยังปิดอยู่');else openShop(sid);return;}
+    if(act==='togad'){toggleAd(parseInt(el.getAttribute('data-iid'),10),parseInt(el.getAttribute('data-ai'),10));return;}
+    if(act==='addcart'){addCart(parseInt(el.getAttribute('data-iid'),10));return;}
+    if(act==='chqty'){chQty(parseInt(el.getAttribute('data-qi'),10),parseInt(el.getAttribute('data-qd'),10));return;}
+    // data-x (admin)
+    if(x){
+      var si=parseInt(el.getAttribute('data-si'),10);
+      var iiA=el.getAttribute('data-ii'),aiA=el.getAttribute('data-ai');
+      var ii=iiA!==null?parseInt(iiA,10):null,ai=aiA!==null?parseInt(aiA,10):null;
+      if(x==='dsh'){if(confirm('ลบร้านนี้?')){shops.splice(si,1);saveShops();renderAdmin();}}
+      else if(x==='addit'){shops[si].items.push({id:Date.now(),name:'เมนูใหม่',desc:'',price:50,emoji:'🍽️',img:'',addons:[]});saveShops();renderAdmin();}
+      else if(x==='dit'){shops[si].items.splice(ii,1);saveShops();renderAdmin();}
+      else if(x==='addal'){if(!shops[si].items[ii].addons)shops[si].items[ii].addons=[];shops[si].items[ii].addons.push({l:'ตัวเลือกใหม่',p:10});saveShops();renderAdmin();}
+      else if(x==='dal'){shops[si].items[ii].addons.splice(ai,1);saveShops();renderAdmin();}
+      else if(x==='rset'){if(confirm('รีเซ็ตเลขออเดอร์?')){shops[si].counter=0;saveShops();renderAdmin();}}
+      return;
+    }
+    el=el.parentNode;
+  }
+},true); // <-- true = capture phase, iOS-safe
+
+document.addEventListener('change',function(ev){
+  var el=ev.target,id=el.id,x=el.getAttribute&&el.getAttribute('data-x')||'';
+  if(id==='LOGOFILE'){if(!el.files[0])return;readFile(el.files[0],function(d){blogo=d;SS('blogo',blogo);applyBrand();});return;}
+  if(id==='ARATE'){rate=parseFloat(el.value)||10;SS('rate',''+rate);return;}
+  if(!x)return;
+  var si=parseInt(el.getAttribute('data-si'),10);
+  var iiA=el.getAttribute('data-ii'),aiA=el.getAttribute('data-ai');
+  var ii=iiA!==null?parseInt(iiA,10):null,ai=aiA!==null?parseInt(aiA,10):null;
+  if(x==='upsh'){if(!el.files[0])return;readFile(el.files[0],function(d){shops[si].img=d;saveShops();renderAdmin();});}
+  else if(x==='upit'){if(!el.files[0])return;readFile(el.files[0],function(d){shops[si].items[ii].img=d;saveShops();renderAdmin();});}
+  else if(x==='scode')shops[si].code=el.value.toUpperCase();
+  else if(x==='sname')shops[si].name=el.value;
+  else if(x==='saddr')shops[si].addr=el.value;
+  else if(x==='smaps')shops[si].mapsUrl=el.value;
+  else if(x==='sopen')shops[si].open=el.checked;
+  else if(x==='iname')shops[si].items[ii].name=el.value;
+  else if(x==='iprice')shops[si].items[ii].price=parseInt(el.value,10)||0;
+  else if(x==='al')shops[si].items[ii].addons[ai].l=el.value;
+  else if(x==='ap')shops[si].items[ii].addons[ai].p=parseInt(el.value,10)||0;
+  if(x!=='upsh'&&x!=='upit')saveShops();
+},true);
+
+document.addEventListener('input',function(ev){if(ev.target.id==='SINP')filterShops();},true);
+$i('PINF').addEventListener('keydown',function(ev){if(ev.keyCode===13)checkPin();});
+
+// INIT
+applyBrand();
+</script>
+</body>
+</html>
